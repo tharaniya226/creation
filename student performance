@@ -1,0 +1,45 @@
+import pandas as pd
+import random
+
+
+def create_dataset(n=10):
+    candidates = []
+    for i in range(1, n + 1):
+        candidates.append({
+            'Candidate_ID': f'C{i}',
+            'Score': random.randint(40, 100)  
+        })
+    return pd.DataFrame(candidates)
+
+
+def analyze_performance(df):
+    df['Performance'] = df['Score'].apply(lambda x: 'Strong' if x >= 75 else ('Weak' if x < 50 else 'Average'))
+    return df
+
+
+def recommend_todo(df):
+    todo_list = {
+        'Weak': 'Focus on foundational concepts, attend mentoring sessions.',
+        'Average': 'Revise key concepts and practice more problems.',
+        'Strong': 'Challenge yourself with advanced topics and help others.'
+    }
+    df['To-Do'] = df['Performance'].map(todo_list)
+    return df
+
+
+def pair_performers(df):
+    weak = df[df['Performance'] == 'Weak']
+    strong = df[df['Performance'] == 'Strong']
+    pairs = list(zip(weak['Candidate_ID'], strong['Candidate_ID']))
+    return pairs
+
+
+df = create_dataset(n=10)
+df = analyze_performance(df)
+df = recommend_todo(df)
+pairs = pair_performers(df)
+
+print("Candidate Performance Data:")
+print(df)
+print("\nRecommended Mentor Pairs:")
+print(pairs)
